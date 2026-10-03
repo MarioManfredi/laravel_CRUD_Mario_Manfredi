@@ -4,6 +4,9 @@
         <h5 class="card-title">{{$article->title}}</h5>
         <h4 class="lead">{{$article->typology}}</h4>
         <h3 class="card-text">{{$article->price}} €</h4>
+        @if($article->user)    
+            <p class="card-text">Creato dall'utente {{$article->user->name}}</p>
+        @endif
         <p class="card-text">{{$article->body}}</p>
         <a href="{{route('article.show', compact('article'))}}" class="btn btn-secondary">Dettagli</a>
     </div>

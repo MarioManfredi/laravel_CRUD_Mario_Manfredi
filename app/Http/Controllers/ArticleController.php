@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -41,10 +43,11 @@ class ArticleController extends Controller
             'price'=> $request->price,
             'typology'=> $request->typology,
             'body'=> $request->body,
-            'img'=> $img
+            'img'=> $img,
+            'user_id'=> Auth::user()->id
         ]);
 
-        return redirect()->back()->with('message', 'Articolo creato correttamente');
+        return redirect(route('article.index'))->with('message', 'Articolo creato correttamente');
     }
 
     /**
@@ -60,7 +63,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+        return view('article/edit', compact('article'));
     }
 
     /**
@@ -68,7 +71,25 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        //
+        
+        if($request->file('img')){
+
+            // elimino l'immagine vecchia caricata prima di inserire quella nuova
+            Storage::disk('public')->delete($article->img);
+            $img= $request->file('img')->store('img', 'public');
+        }else{
+            $img= $article->img;
+        }
+
+        $article->update([
+            'title'=> $request->title,
+            'price'=> $request->price,
+            'typology'=> $request->typology,
+            'body'=> $request->body,
+            'img'=> $img
+        ]);
+
+        return redirect(route('article.index'))->with('message', 'Articolo modificato');
     }
 
     /**
@@ -76,6 +97,8 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $article->delete();
+
+        return redirect(route('article.index'))->with('message', 'Articolo eliminato');
     }
 }

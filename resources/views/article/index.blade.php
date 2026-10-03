@@ -5,6 +5,8 @@
                 <h1 class="text-center">I miei Articoli</h1>
             </div>
         </div>
+
+        <x-layout-message/>
         
         <div class="row justify-content-center">
             @foreach ($articles as $article)
